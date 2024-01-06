@@ -56,6 +56,10 @@ jobs:
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
+          labels: |
+            maintainer=oklopfer
+            org.opencontainers.image.title=Pegasus
+            org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
           annotations: |
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
 
@@ -122,6 +126,10 @@ jobs:
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
+          labels: |
+            maintainer=oklopfer
+            org.opencontainers.image.title=Pegasus
+            org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
           annotations: |
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
 
