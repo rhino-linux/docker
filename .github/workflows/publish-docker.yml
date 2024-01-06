@@ -28,11 +28,6 @@ jobs:
       packages: write
 
     steps:
-      - name: Prepare
-        run: |
-          platform=${{ matrix.platform }}
-          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -43,7 +38,7 @@ jobs:
 
       - name: Build Dockerfile
         run: |
-          vertag="${{ env.INPUT_VERTAG }}"
+          vertag=${{ env.INPUT_VERTAG }}
           ./rhino-docker-builder -f -a off -v ${vertag}
           echo "BUILT_DOCKFILE=$(ls Dockerfile.RhinoLinux*)"  >> $GITHUB_ENV
           if [[ -z ${vertag} ]]; then
@@ -51,6 +46,8 @@ jobs:
           else
             echo "DOCK_LABEL=${{ env.INPUT_VERTAG }}"  >> $GITHUB_ENV
           fi
+          platform=${{ matrix.platform }}
+          echo "PLATFORM_PAIR=${platform//\//-}" >> $GITHUB_ENV
 
       - name: Docker meta
         id: meta
