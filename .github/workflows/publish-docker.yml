@@ -14,7 +14,14 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: buildjet-4vcpu-ubuntu-2204
+            platform: linux/amd64
+          - runner: buildjet-4vcpu-ubuntu-2204-arm
+            platform: linux/arm64
     permissions:
       contents: read
       packages: write
@@ -61,7 +68,7 @@ jobs:
         with:
           context: .
           file: ./${{ env.BUILT_DOCKFILE }}
-          platforms: linux/amd64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
