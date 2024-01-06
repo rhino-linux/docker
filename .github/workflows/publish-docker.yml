@@ -10,7 +10,7 @@ on:
 env:
   INPUT_VERTAG: ${{ github.event.inputs.vertag }}
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/test
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/docker
 
 jobs:
   build:
