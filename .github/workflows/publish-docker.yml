@@ -41,7 +41,7 @@ jobs:
           ./rhino-docker-builder -f -a off -v ${vertag}
           echo "BUILT_DOCKFILE=$(ls Dockerfile.RhinoLinux*)"  >> $GITHUB_ENV
           if [[ -z ${vertag} ]]; then
-            printf 'DOCK_LABLEL=%(%Y%m%d)T\n'  >> $GITHUB_ENV
+            printf 'DOCK_LABEL=%(%Y%m%d)T\n'  >> $GITHUB_ENV
           else
             echo "DOCK_LABEL=${{ env.INPUT_VERTAG }}"  >> $GITHUB_ENV
           fi
@@ -106,7 +106,7 @@ jobs:
         run: |
           vertag=${{ env.INPUT_VERTAG }}
           if [[ -z ${vertag} ]]; then
-            printf 'DOCK_LABLEL=%(%Y%m%d)T\n'  >> $GITHUB_ENV
+            printf 'DOCK_LABEL=%(%Y%m%d)T\n'  >> $GITHUB_ENV
           else
             echo "DOCK_LABEL=${{ env.INPUT_VERTAG }}"  >> $GITHUB_ENV
           fi
