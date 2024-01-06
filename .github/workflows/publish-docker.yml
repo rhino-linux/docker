@@ -46,7 +46,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           labels: ${{ env.DOCK_LABEL }}
           tags: |
-            type=ref,event=branch
+            type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
 
       - name: Log into registry ${{ env.REGISTRY }}
