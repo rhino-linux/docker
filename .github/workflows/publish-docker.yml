@@ -58,7 +58,7 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=${{ env.INPUT_VERTAG }}-${{ matrix.platform }}
+            type=raw,value=${{ env.INPUT_VERTAG }}
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
