@@ -55,7 +55,7 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
-            type=latest
+          flavor: latest=true
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
@@ -118,7 +118,7 @@ jobs:
           images: ${{ env.REGISTRY_IMAGE }}
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
-            type=latest
+          flavor: latest=true
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
