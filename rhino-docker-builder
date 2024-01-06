@@ -1,5 +1,5 @@
 #!/bin/bash
-dateiniso="$(date +%Y%m%d)"
+printf -v dateiniso '%(%Y%m%d)T\n'
 
 # Colors
 if [[ -z $NO_COLOR ]]; then
