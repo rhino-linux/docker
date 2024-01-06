@@ -10,7 +10,7 @@ on:
 env:
   INPUT_VERTAG: ${{ github.event.inputs.vertag }}
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/docker
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/test
 
 jobs:
   build:
@@ -56,6 +56,8 @@ jobs:
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
+          annotations: |
+            org.opencontainers.image.description="Contains Rhino Linux ${{ env.DOCK_LABEL }}"
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
@@ -72,6 +74,7 @@ jobs:
           file: ./${{ env.BUILT_DOCKFILE }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
+          annotations: ${{ steps.meta.outputs.annotations }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
@@ -119,6 +122,8 @@ jobs:
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
+          annotations: |
+            org.opencontainers.image.description="Contains Rhino Linux ${{ env.DOCK_LABEL }}"
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
