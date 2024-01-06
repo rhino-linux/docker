@@ -31,9 +31,10 @@ jobs:
 
       - name: Build Dockerfile
         run: |
-          ./rhino-docker-builder -f -a off -v ${{ env.INPUT_VERTAG }}
+          vertag="${{ env.INPUT_VERTAG }}"
+          ./rhino-docker-builder -f -a off -v ${vertag}
           echo "BUILT_DOCKFILE=$(ls Dockerfile.RhinoLinux*)"  >> $GITHUB_ENV
-          if [[ -z ${{ env.INPUT_VERTAG }} ]]; then
+          if [[ -z ${vertag} ]]; then
             echo "DOCK_LABEL=$(date +%Y%m%d)"  >> $GITHUB_ENV
           else
             echo "DOCK_LABEL=${{ env.INPUT_VERTAG }}"  >> $GITHUB_ENV
