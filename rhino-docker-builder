@@ -266,8 +266,8 @@ RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime && echo \$TZ > /etc/timezone
 ARG package="pacstall"
 
 RUN source /etc/os-release && \
-    sudo sed -i "s/\$VERSION_CODENAME/.\/devel/g" /etc/apt/sources.list && \
-    if [[ $(dpkg --print-architecture) == "amd64" ]]; then \
+    sed -i "s/\$VERSION_CODENAME/.\/devel/g" /etc/apt/sources.list && \
+    if [[ \$(dpkg --print-architecture) == "amd64" ]]; then \
         dpkg --add-architecture i386; \
     fi && \
     apt-get update && \
@@ -277,7 +277,7 @@ RUN source /etc/os-release && \
     apt-get autoclean && \
     apt-get autoremove -y
 RUN adduser --disabled-password --gecos '' rhino && adduser rhino sudo
-RUN sudo bash -c "$(curl -fsSL https://pacstall.dev/q/install?dnt || wget -q https://pacstall.dev/q/install?dnt -O -)" && \
+RUN sudo bash -c "\$(curl -fsSL https://pacstall.dev/q/install?dnt || wget -q https://pacstall.dev/q/install?dnt -O -)" && \
     rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN chown -R rhino:rhino /var/log/pacstall && chown -R rhino:rhino /tmp/pacstall
