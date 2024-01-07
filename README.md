@@ -13,7 +13,7 @@ Options:
   -A/-a, --arch     Target architecture
                     (options: auto, arm64/aarch64, amd64/x86_64, default: all/off)
 
-  -C/-c, --clean    Use --no-cache during Docker build
+  -C/-c, --clean    Use --no-cache during Docker image build
                     (default: disabled)
 
   -F/-f, --file     Promptless: Create only the Dockerfile, with instructions
