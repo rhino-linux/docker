@@ -1,5 +1,6 @@
-#!/bin/bash
+#!/usr/bin/env bash
 dateiniso="$(date +%Y%m%d)"
+shopt -s extglob
 
 # Colors
 if [[ -z $NO_COLOR ]]; then
@@ -137,7 +138,12 @@ function ask() {
 function wipe_docker_bits() {
   local_docker_images=($(docker image ls | grep rhino | awk '{print $1":"$2}'))
   ldi_hashes=($(docker image ls | grep rhino | awk '{print $3}'))
-  local_docker_files=($(ls | grep Dockerfile.RhinoLinux))
+  local_docker_files=()
+  for i in *; do
+    if grep -q 'Dockerfile.RhinoLinux' <<< "${i}"; then
+      local_docker_files+=("${i}")
+    fi
+  done
   echo "${BYellow}Found${NC} ${BPurple}${#local_docker_files[@]}${NC} ${BYellow}files:${NC}"
   if ! [[ -z ${local_docker_files} ]]; then
     for i in ${local_docker_files[*]}; do
@@ -220,13 +226,13 @@ while (($# > 0)); do
       ;;
     -H | -h | --help)
       show_help
-      exit 1
+      exit 0
       ;;
   esac
 done
 
-devarch=$(uname -m)
-if ! [[ ${devarch} == "aarch64" || ${devarch} == "arm64" || ${devarch} == "x86_64" || ${devarch} == "amd64" ]]; then
+devarch=${HOSTTYPE}
+if ! [[ ${devarch} == @(aarch64|arm64|x86_64|amd64) ]]; then
   echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
   exit 1
 fi
