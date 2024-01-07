@@ -29,19 +29,22 @@ ${BYellow}Options:${NC}
                     (default: ${CYAN}current date in YYYYMMDD format${NC})
 
   ${BGreen}-A/-a, --arch${NC}     Target architecture
-                    (options: ${CYAN}arm64${NC}/${CYAN}aarch64${NC}, ${CYAN}amd64${NC}/${CYAN}x86_64${NC}, ${CYAN}all${NC}/${CYAN}off${NC}, default: ${CYAN}auto${NC})
+                    (options: ${CYAN}auto${NC}, ${CYAN}arm64${NC}/${CYAN}aarch64${NC}, ${CYAN}amd64${NC}/${CYAN}x86_64${NC}, default: ${CYAN}all${NC}/${CYAN}off${NC})
 
-  ${BGreen}-T/-t, --test${NC}     ${YELLOW}Promptless:${NC} fully build and start up the image
+  ${BGreen}-C/-c, --clean${NC}    Use --no-cache during Docker image build
                     (default: ${CYAN}disabled${NC})
 
-  ${BGreen}-C/-c, --clean${NC}    Use --no-cache during Docker build
+  ${BGreen}-F/-f, --file${NC}     Create only the Dockerfile, with instructions
+                    (default: ${CYAN}prompted${NC})
+
+  ${BGreen}-B/-b, --build${NC}    Create both the Dockerfile and the Docker image
+                    (default: ${CYAN}prompted${NC})
+
+  ${BGreen}-T/-t, --test${NC}     Start the Docker image up after build is complete
                     (default: ${CYAN}disabled${NC})
 
-  ${BGreen}-F/-f, --file${NC}     ${YELLOW}Promptless:${NC} Create only the Dockerfile, with instructions
-                    (default: ${CYAN}prompted${NC})
-
-  ${BGreen}-W/-w, --wipe${NC}     ${RED}Hazardous:${NC} Delete all related Dockerfiles and Docker images
-                    (default: ${CYAN}prompted${NC})
+  ${BGreen}-W/-w, --wipe${NC}     ${YELLOW}Hazardous:${NC} Delete all related Dockerfiles and Docker images
+                    (default: ${CYAN}always prompted${NC})
 
   ${BGreen}-H/-h, --help${NC}     Show this help message
 
@@ -51,20 +54,20 @@ ${BYellow}Description:${NC}
 
 ${BYellow}Examples:${NC}
 
-  ${BPurple}$(basename "$0") -t -c -v 2023.4 -a arm64${NC}
+  ${BPurple}$(basename "$0") -f${NC}
     
-    Builds and boots ${BGreen}arm64v8/rhinolinux:2023.4${NC} from scratch.
+    Creates the file ${BGreen}Dockerfile.RhinoLinux-${dateiniso}${NC} for building 
+    ${BGreen}rhino-linux:${dateiniso}${NC}, with instructions on how to build and run the image.
+
+
+  ${BPurple}$(basename "$0") -b -t -c -v 2023.4 -a x86_64${NC}
+    
+    Builds and boots ${BGreen}amd64/rhino-linux:2023.4${NC} from scratch.
     ${BYellow}Note:${NC} the version tag may not correlate with the actual Rhino Linux version.
     This option is meant for easily publishing images for specific milestones.
 
 
-  ${BPurple}$(basename "$0") --file -A x86_64${NC}
-    
-    Creates the Dockerfile ${BGreen}Dockerfile.RhinoLinux.${dateiniso}_amd64${NC} for building 
-    ${BGreen}arm64v8/rhinolinux:${dateiniso}${NC}, with instructions on how to build and run the image.
-
-
-${BPurple}$(basename "$0")${NC} ${BCyan}0.1.0${NC}
+${BPurple}$(basename "$0")${NC} ${BCyan}0.1.1${NC}
 ${BYellow}Written by:${NC} Oren Klopfer <oren@taumoda.com>
 
 EOF
@@ -168,6 +171,7 @@ function wipe_docker_bits() {
 }
 
 test_mode=0
+build_mode=0
 no_cache=""
 file_trigger=0
 
@@ -180,17 +184,21 @@ while (($# > 0)); do
       shift
       ;;
     -A | -a | --arch)
-      darcher="$2"
+      input_darch="$2"
       shift
       shift
       ;;
     -T | -t | --test)
+      test_mode=1
+      shift
+      ;;
+    -B | -b | --build)
       if ((file_trigger == 1)); then
-        echo "${BRed}Nope.${NC} ${YELLOW}File is the opposite of Test.${NC}"
+        echo "${BRed}Nope.${NC} ${YELLOW}File is the opposite of Build.${NC}"
         exit 1
       fi
       DISABLE_PROMPTS="yes"
-      test_mode=1
+      build_mode=1
       shift
       ;;
     -C | -c | --clean)
@@ -198,8 +206,8 @@ while (($# > 0)); do
       shift
       ;;
     -F | -f | --file)
-      if ((test_mode == 1)); then
-        echo "${BRed}Nope.${NC} ${YELLOW}File is the opposite of Test.${NC}"
+      if ((build_mode == 1)); then
+        echo "${BRed}Nope.${NC} ${YELLOW}File is the opposite of Build.${NC}"
         exit 1
       fi
       DISABLE_PROMPTS="yes"
@@ -217,39 +225,38 @@ while (($# > 0)); do
   esac
 done
 
-if [[ -z ${imgver} ]]; then
-  imgver="${dateiniso}"
+devarch=$(uname -m)
+if ! [[ ${devarch} == "aarch64" || ${devarch} == "arm64" || ${devarch} == "x86_64" || ${devarch} == "amd64" ]]; then
+  echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
+  exit 1
 fi
 
-if [[ -z ${darcher} ]]; then
-  if [[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]]; then
-    darcher="arm64"
-  elif [[ $(uname -m) == "x86_64" || $(uname -m) == "amd64" ]]; then
-    darcher="amd64"
-  else
-    echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
-    exit 1
-  fi
+if [[ -z ${input_darch} ]]; then
+  input_darch="off"
+elif [[ ${input_darch} == "auto" ]]; then
+  input_darch=${devarch}
 fi
 
-if [[ ${darcher} == "aarch64" || ${darcher} == "arm64" ]]; then
-  darcher="arm64"
-  base_darch="${darcher}v8/"
-  darcher="_${darcher}"
-elif [[ ${darcher} == "x86_64" || ${darcher} == "amd64" ]]; then
-  darcher="amd64"
-  base_darch="${darcher}/"
-  darcher="_${darcher}"
-elif [[ ${darcher} == "off" ||  ${darcher} == "all" ]]; then
-  darcher=""
+if [[ ${input_darch} == "aarch64" || ${input_darch} == "arm64" ]]; then
+  base_darch="arm64v8/"
+  darcher="-${input_darch}"
+elif [[ ${input_darch} == "x86_64" || ${input_darch} == "amd64" ]]; then
+  base_darch="amd64/"
+  darcher="-${input_darch}"
+elif [[ ${input_darch} == "off" ||  ${input_darch} == "all" ]]; then
   base_darch=""
+  darcher=""
 else
   echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
   exit 1
 fi
 
-built_dock="$(pwd)/Dockerfile.RhinoLinux.${imgver}${darcher}"
-built_img="${base_darch}rhinolinux:${imgver}"
+if [[ -z ${imgver} ]]; then
+  imgver="${dateiniso}"
+fi
+
+built_dock="$(pwd)/Dockerfile.RhinoLinux-${imgver}${darcher}"
+built_img="${base_darch}rhino-linux:${imgver}"
 
 if [[ -f ${built_dock} ]]; then
   rm -f ${built_dock}
@@ -293,11 +300,17 @@ WORKDIR /home/rhino
 CMD ["bash"]
 EOF
 
-if ((test_mode == 1)); then
+if ((build_mode == 1)); then
   echo "${BYellow}Dockerfile built at${NC} ${BPurple}${built_dock}${BYellow}. Building${NC} ${BPurple}${built_img}${BYellow}...${NC}"
-  docker build -f ${built_dock} -t ${built_img} . ${no_cache} \
-    && echo "${BYellow}Built image${NC} ${BPurple}${built_img}${BYellow}. Starting...${NC}" \
-    && docker run -it --net=host ${built_img} bash
+  docker build -f ${built_dock} -t ${built_img} . ${no_cache} && \
+    echo "${BYellow}Built image${NC} ${BPurple}${built_img}${BYellow}.${NC}" && \
+    if ((test_mode == 1)); then
+      echo "${BYellow}Starting...${NC}" && \
+      docker run -it --net=host ${built_img} bash
+    else
+      echo "${BYellow}Not starting. Run the following command to test:${NC}"
+      echo "${GREEN}docker run -it --net=host ${built_img} bash${NC}"
+    fi
 else
   echo "${BYellow}Dockerfile built at${NC} ${BPurple}${built_dock}${BYellow}.${NC}"
   ask "Start image build now?" N
@@ -307,15 +320,20 @@ else
     echo "${BYellow}After the build has complete, run the following command to test the image:${NC}"
     echo "${GREEN}docker run -it --net=host ${built_img} bash${NC}"
   else
-    docker build -f ${built_dock} -t ${built_img} . ${no_cache} \
-      && echo "${BYellow}Built image${NC} ${BPurple}${built_img}${BYellow}.${NC}"
-    ask "Do you want to start the image to test?" N
-    if ((answer == 0)); then
-      echo "${BYellow}Not starting. Run the following command to test:${NC}"
-      echo "${GREEN}docker run -it --net=host ${built_img} bash${NC}"
-    else
-      echo "${BYellow}Starting...${NC}"
+    docker build -f ${built_dock} -t ${built_img} . ${no_cache} && \
+      echo "${BYellow}Built image${NC} ${BPurple}${built_img}${BYellow}.${NC}"
+    if ((test_mode == 1)); then
+      echo "${BYellow}Starting...${NC}" && \
       docker run -it --net=host ${built_img} bash
+    else
+      ask "Do you want to start the image to test?" N
+      if ((answer == 0)); then
+        echo "${BYellow}Not starting. Run the following command to test:${NC}"
+        echo "${GREEN}docker run -it --net=host ${built_img} bash${NC}"
+      else
+        echo "${BYellow}Starting...${NC}"
+        docker run -it --net=host ${built_img} bash
+      fi
     fi
   fi
 fi
