@@ -10,7 +10,7 @@ on:
 env:
   INPUT_VERTAG: ${{ github.event.inputs.vertag }}
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/test
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/docker
 
 jobs:
   build:
@@ -32,9 +32,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          version: v0.12.0
-
+        
       - name: Build Dockerfile
         run: |
           vertag=${{ env.INPUT_VERTAG }}
@@ -56,14 +54,6 @@ jobs:
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
-          labels: |
-            maintainer=oklopfer
-            org.opencontainers.image.title=Pegasus
-            org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
-          annotations: |
-            maintainer=oklopfer
-            org.opencontainers.image.title=Pegasus
-            org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
 
       - name: Login to registry
         uses: docker/login-action@v3
@@ -80,7 +70,6 @@ jobs:
           file: ./${{ env.BUILT_DOCKFILE }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          annotations: ${{ steps.meta.outputs.annotations }}
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
 
       - name: Export digest
@@ -130,14 +119,6 @@ jobs:
           tags: |
             type=raw,value=${{ env.DOCK_LABEL }}
           flavor: latest=true
-          labels: |
-            maintainer=oklopfer
-            org.opencontainers.image.title=Pegasus
-            org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
-          annotations: |
-            maintainer=oklopfer
-            org.opencontainers.image.title=Pegasus
-            org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v3
@@ -150,9 +131,6 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create \
-            --annotation "index:maintainer=oklopfer" \
-            --annotation "index:org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}" \
-            --annotation "index:org.opencontainers.image.title=Pegasus" \
             $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)          
 
