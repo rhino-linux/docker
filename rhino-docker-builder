@@ -44,7 +44,7 @@ ${BYellow}Options:${NC}
                     (default: ${CYAN}disabled${NC})
 
   ${BGreen}-W/-w, --wipe${NC}     ${YELLOW}Hazardous:${NC} Delete all related Dockerfiles and Docker images
-                    (default: ${CYAN}prompted${NC})
+                    (default: ${CYAN}always prompted${NC})
 
   ${BGreen}-H/-h, --help${NC}     Show this help message
 

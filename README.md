@@ -26,7 +26,7 @@ Options:
                     (default: disabled)
 
   -W/-w, --wipe     Hazardous: Delete all related Dockerfiles and Docker images
-                    (default: prompted)
+                    (default: always prompted)
 
   -H/-h, --help     Show this help message
 
