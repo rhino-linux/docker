@@ -11,6 +11,7 @@ env:
   INPUT_VERTAG: ${{ github.event.inputs.vertag }}
   REGISTRY: ghcr.io
   REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/test
+  DOCKER_METADATA_ANNOTATIONS_LEVELS: index
 
 jobs:
   build:
@@ -60,8 +61,6 @@ jobs:
             maintainer=oklopfer
             org.opencontainers.image.title=Pegasus
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
-          env:
-            DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
           annotations: |
             maintainer=oklopfer
             org.opencontainers.image.title=Pegasus
@@ -134,8 +133,6 @@ jobs:
             maintainer=oklopfer
             org.opencontainers.image.title=Pegasus
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
-          env:
-            DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
           annotations: |
             maintainer=oklopfer
             org.opencontainers.image.title=Pegasus
