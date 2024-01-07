@@ -56,13 +56,13 @@ ${BYellow}Examples:${NC}
 
   ${BPurple}$(basename "$0") -f${NC}
     
-    Creates the file ${BGreen}Dockerfile.RhinoLinux-${dateiniso}${NC} for building 
-    ${BGreen}rhino-linux:${dateiniso}${NC}, with instructions on how to build and run the image.
+    Creates the file ${BGreen}Dockerfile-RhinoLinux-${dateiniso}${NC} for building 
+    ${BGreen}rhino-linux/docker:${dateiniso}${NC}, with instructions on how to build and run the image.
 
 
   ${BPurple}$(basename "$0") -b -t -c -v 2023.4 -a x86_64${NC}
     
-    Builds and boots ${BGreen}amd64/rhino-linux:2023.4${NC} from scratch.
+    Builds and boots ${BGreen}amd64/rhino-linux/docker:2023.4${NC} from scratch.
     ${BYellow}Note:${NC} the version tag may not correlate with the actual Rhino Linux version.
     This option is meant for easily publishing images for specific milestones.
 
@@ -255,8 +255,8 @@ if [[ -z ${imgver} ]]; then
   imgver="${dateiniso}"
 fi
 
-built_dock="$(pwd)/Dockerfile.RhinoLinux-${imgver}${darcher}"
-built_img="${base_darch}rhino-linux:${imgver}"
+built_dock="$(pwd)/Dockerfile-RhinoLinux-${imgver}${darcher}"
+built_img="${base_darch}rhino-linux/docker:${imgver}"
 
 if [[ -f ${built_dock} ]]; then
   rm -f ${built_dock}

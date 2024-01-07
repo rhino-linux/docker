@@ -34,12 +34,12 @@ Examples:
 
   rhino-docker-builder -f
     
-    Creates the file Dockerfile.RhinoLinux-YYYYMMDD for building
-    rhino-linux:YYYYMMDD, with instructions on how to build and run the image.
+    Creates the file Dockerfile-RhinoLinux-YYYYMMDD for building
+    rhino-linux/docker:YYYYMMDD, with instructions on how to build and run the image.
 
   rhino-docker-builder -b -t -c -v 2023.4 -a x86_64
     
-    Builds and boots amd64/rhino-linux:2023.4 from scratch.
+    Builds and boots amd64/rhino-linux/docker:2023.4 from scratch.
     Note: the version tag may not correlate with the actual Rhino Linux version.
     This option is meant for easily publishing images for specific milestones.
 ```
