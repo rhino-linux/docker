@@ -11,16 +11,19 @@ Options:
                     (default: current date in YYYYMMDD format)
 
   -A/-a, --arch     Target architecture
-                    (options: arm64/aarch64, amd64/x86_64, all/off, default: auto)
-
-  -T/-t, --test     Promptless: fully build and start up the image
-                    (default: disabled)
+                    (options: auto, arm64/aarch64, amd64/x86_64, default: all/off)
 
   -C/-c, --clean    Use --no-cache during Docker build
                     (default: disabled)
 
   -F/-f, --file     Promptless: Create only the Dockerfile, with instructions
                     (default: prompted)
+
+  -B/-b, --build    Create both the Dockerfile and the Docker image
+                    (default: prompted)
+
+  -T/-t, --test     Start the Docker image up after build is complete
+                    (default: disabled)
 
   -W/-w, --wipe     Hazardous: Delete all related Dockerfiles and Docker images
                     (default: prompted)
@@ -29,15 +32,14 @@ Options:
 
 Examples:
 
-  rhino-docker-builder -t -c -v 2023.4 -a arm64
+  rhino-docker-builder -f
     
-    Builds and boots arm64v8/rhinolinux:2023.4 from scratch.
+    Creates the Dockerfile Dockerfile.RhinoLinux-YYYYMMDD for building 
+    rhino-linux:YYYYMMDD, with instructions on how to build and run the image.
+
+  rhino-docker-builder -b -t -c -v 2023.4 -a x86_64
+    
+    Builds and boots amd64/rhino-linux:2023.4 from scratch.
     Note: the version tag may not correlate with the actual Rhino Linux version.
     This option is meant for easily publishing images for specific milestones.
-
-
-  rhino-docker-builder --file -A x86_64
-    
-    Creates the Dockerfile Dockerfile.RhinoLinux.${dateiniso}_amd64 for building 
-    arm64v8/rhinolinux:${dateiniso}, with instructions on how to build and run the image.
 ```
