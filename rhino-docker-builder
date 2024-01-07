@@ -29,7 +29,7 @@ ${BYellow}Options:${NC}
                     (default: ${CYAN}current date in YYYYMMDD format${NC})
 
   ${BGreen}-A/-a, --arch${NC}     Target architecture
-                    (options: ${CYAN}arm64${NC}/${CYAN}aarch64${NC}, ${CYAN}amd64${NC}/${CYAN}x86_64${NC}, ${CYAN}all${NC}/${CYAN}off${NC}, default: ${CYAN}auto${NC})
+                    (options: ${CYAN}auto${NC}, ${CYAN}arm64${NC}/${CYAN}aarch64${NC}, ${CYAN}amd64${NC}/${CYAN}x86_64${NC}, default: ${CYAN}all${NC}/${CYAN}off${NC})
 
   ${BGreen}-T/-t, --test${NC}     ${YELLOW}Promptless:${NC} fully build and start up the image
                     (default: ${CYAN}disabled${NC})
@@ -53,7 +53,7 @@ ${BYellow}Examples:${NC}
 
   ${BPurple}$(basename "$0") -t -c -v 2023.4 -a arm64${NC}
     
-    Builds and boots ${BGreen}arm64v8/rhinolinux:2023.4${NC} from scratch.
+    Builds and boots ${BGreen}arm64v8/rhino-linux:2023.4${NC} from scratch.
     ${BYellow}Note:${NC} the version tag may not correlate with the actual Rhino Linux version.
     This option is meant for easily publishing images for specific milestones.
 
@@ -61,7 +61,7 @@ ${BYellow}Examples:${NC}
   ${BPurple}$(basename "$0") --file -A x86_64${NC}
     
     Creates the Dockerfile ${BGreen}Dockerfile.RhinoLinux.${dateiniso}_amd64${NC} for building 
-    ${BGreen}arm64v8/rhinolinux:${dateiniso}${NC}, with instructions on how to build and run the image.
+    ${BGreen}arm64v8/rhino-linux:${dateiniso}${NC}, with instructions on how to build and run the image.
 
 
 ${BPurple}$(basename "$0")${NC} ${BCyan}0.1.0${NC}
@@ -180,7 +180,7 @@ while (($# > 0)); do
       shift
       ;;
     -A | -a | --arch)
-      darcher="$2"
+      input_darch="$2"
       shift
       shift
       ;;
@@ -217,39 +217,38 @@ while (($# > 0)); do
   esac
 done
 
-if [[ -z ${imgver} ]]; then
-  imgver="${dateiniso}"
+devarch=$(uname -m)
+if ! [[ ${devarch} == "aarch64" || ${devarch} == "arm64" || ${devarch} == "x86_64" || ${devarch} == "amd64" ]]; then
+  echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
+  exit 1
 fi
 
-if [[ -z ${darcher} ]]; then
-  if [[ $(uname -m) == "aarch64" || $(uname -m) == "arm64" ]]; then
-    darcher="arm64"
-  elif [[ $(uname -m) == "x86_64" || $(uname -m) == "amd64" ]]; then
-    darcher="amd64"
-  else
-    echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
-    exit 1
-  fi
+if [[ -z ${input_darch} ]]; then
+  input_darch="off"
+elif [[ ${input_darch} == "auto" ]]; then
+  input_darch=${devarch}
 fi
 
-if [[ ${darcher} == "aarch64" || ${darcher} == "arm64" ]]; then
-  darcher="arm64"
-  base_darch="${darcher}v8/"
-  darcher="_${darcher}"
-elif [[ ${darcher} == "x86_64" || ${darcher} == "amd64" ]]; then
-  darcher="amd64"
-  base_darch="${darcher}/"
-  darcher="_${darcher}"
-elif [[ ${darcher} == "off" ||  ${darcher} == "all" ]]; then
-  darcher=""
+if [[ ${input_darch} == "aarch64" || ${input_darch} == "arm64" ]]; then
+  base_darch="arm64v8/"
+  darcher="-${input_darch}"
+elif [[ ${input_darch} == "x86_64" || ${input_darch} == "amd64" ]]; then
+  base_darch="amd64/"
+  darcher="-${input_darch}"
+elif [[ ${input_darch} == "off" ||  ${input_darch} == "all" ]]; then
   base_darch=""
+  darcher=""
 else
   echo "${BYellow}Rhino Linux only supports ${BPurple}x86_64/amd64${BYellow} + ${BPurple}aarch64/arm64${BYellow} as base architectures!${NC}"
   exit 1
 fi
 
+if [[ -z ${imgver} ]]; then
+  imgver="${dateiniso}"
+fi
+
 built_dock="$(pwd)/Dockerfile.RhinoLinux.${imgver}${darcher}"
-built_img="${base_darch}rhinolinux:${imgver}"
+built_img="${base_darch}rhino-linux:${imgver}"
 
 if [[ -f ${built_dock} ]]; then
   rm -f ${built_dock}
