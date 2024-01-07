@@ -60,7 +60,11 @@ jobs:
             maintainer=oklopfer
             org.opencontainers.image.title=Pegasus
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
+          env:
+            DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
           annotations: |
+            maintainer=oklopfer
+            org.opencontainers.image.title=Pegasus
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
 
       - name: Log into registry ${{ env.REGISTRY }}
@@ -130,7 +134,11 @@ jobs:
             maintainer=oklopfer
             org.opencontainers.image.title=Pegasus
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
+          env:
+            DOCKER_METADATA_ANNOTATIONS_LEVELS: manifest,index
           annotations: |
+            maintainer=oklopfer
+            org.opencontainers.image.title=Pegasus
             org.opencontainers.image.description=Contains Rhino Linux ${{ env.DOCK_LABEL }}
 
       - name: Log into registry ${{ env.REGISTRY }}
