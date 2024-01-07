@@ -10,7 +10,7 @@ on:
 env:
   INPUT_VERTAG: ${{ github.event.inputs.vertag }}
   REGISTRY: ghcr.io
-  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/test
+  REGISTRY_IMAGE: ghcr.io/${{ github.repository_owner }}/docker
 
 jobs:
   build:
@@ -131,7 +131,7 @@ jobs:
         working-directory: /tmp/digests
         run: |
           docker buildx imagetools create \
-            --annotation "index:org.opencontainers.image.description=Contains a Rhino Linux server image for development" \
+            --annotation "index:org.opencontainers.image.description=Contains a Rhino Linux server image for development." \
             $(jq -cr '.tags | map("-t " + .) | join(" ")' <<< "$DOCKER_METADATA_OUTPUT_JSON") \
             $(printf '${{ env.REGISTRY_IMAGE }}@sha256:%s ' *)          
 
