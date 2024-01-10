@@ -25,8 +25,8 @@ Options:
   -P/-p, --pull     Pull a Docker image from the upstream registry
                     (options: --version, default: always uses --arch auto)
 
-  -T/-t, --test     Start the Docker image up after build is complete
-                    (default: disabled)
+  -T/-t, --test     Start the Docker image up after build or pull is complete
+                    (default: disabled or prompted)
 
   -W/-w, --wipe     Hazardous: Delete all related Dockerfiles and Docker images
                     (default: always prompted)

@@ -51,7 +51,7 @@ ${BYellow}Options:${NC}
                     (options: ${CYAN}--version${NC}, default: ${CYAN}always uses --arch auto${NC})
 
   ${BGreen}-T/-t, --test${NC}     Start the Docker image up after build or pull is complete
-                    (default: ${CYAN}disabled${NC})
+                    (default: ${CYAN}disabled or prompted${NC})
 
   ${BGreen}-W/-w, --wipe${NC}     ${YELLOW}Hazardous:${NC} Delete all related Dockerfiles and Docker images
                     (default: ${CYAN}always prompted${NC})
