@@ -385,9 +385,11 @@ function test_image {
 }
 
 if ((pull_upstream == 1)); then
-  pull_image \
-    && test_image \
-    || echo "${BYellow}Version ${BPurple}${imgver}${BYellow} does not exist in the registry.${NC}"
+  if pull_image; then
+    test_image
+  else
+    echo "${BYellow}Version ${BPurple}${imgver}${BYellow} does not exist in the registry.${NC}"
+  fi
 elif ((build_mode == 1)); then
   echo "${BYellow}Dockerfile built at${NC} ${BPurple}${built_dock}${BYellow}. Building${NC} ${BPurple}${built_img}${BYellow}...${NC}"
   build_image \
