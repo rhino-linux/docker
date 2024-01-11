@@ -32,58 +32,59 @@ ${BYellow}Usage:${NC} ${0##*/} ${PURPLE}[OPTIONS]${NC}
 
 ${BYellow}Options:${NC}
 
-  ${BGreen}-V/-v, --version${NC}  Image version tag
-                    (default: ${CYAN}current date in YYYYMMDD format${NC})
+${BGreen}-V/-v, --version${NC}  Image version tag
+                  (default: ${CYAN}current date in YYYYMMDD format${NC})
 
-  ${BGreen}-A/-a, --arch${NC}     Target architecture
-                    (options: ${CYAN}auto${NC}, ${CYAN}arm64${NC}/${CYAN}aarch64${NC}, ${CYAN}amd64${NC}/${CYAN}x86_64${NC}, default: ${CYAN}all${NC}/${CYAN}off${NC})
+${BGreen}-A/-a, --arch${NC}     Target architecture
+                  (options: ${CYAN}auto${NC}, ${CYAN}arm64${NC}/${CYAN}aarch64${NC}, ${CYAN}amd64${NC}/${CYAN}x86_64${NC}, default: ${CYAN}all${NC}/${CYAN}off${NC})
 
-  ${BGreen}-C/-c, --clean${NC}    Use --no-cache during Docker image build
-                    (default: ${CYAN}disabled${NC})
+${BGreen}-C/-c, --clean${NC}    Use --no-cache during Docker image build
+                  (default: ${CYAN}disabled${NC})
 
-  ${BGreen}-F/-f, --file${NC}     Create only the Dockerfile, with instructions
-                    (default: ${CYAN}prompted${NC})
+${BGreen}-F/-f, --file${NC}     Create only the Dockerfile, with instructions
+                  (default: ${CYAN}prompted${NC})
 
-  ${BGreen}-B/-b, --build${NC}    Create both the Dockerfile and the Docker image
-                    (default: ${CYAN}prompted${NC})
+${BGreen}-B/-b, --build${NC}    Create both the Dockerfile and the Docker image
+                  (default: ${CYAN}prompted${NC})
 
-  ${BGreen}-P/-p, --pull${NC}     Pull a Docker image from the upstream registry
-                    (options: ${CYAN}--version${NC}, default: ${CYAN}always uses --arch auto${NC})
+${BGreen}-P/-p, --pull${NC}     Pull a Docker image from the upstream registry
+                  (options: ${CYAN}--version${NC}, default: ${CYAN}always uses --arch auto${NC})
 
-  ${BGreen}-T/-t, --test${NC}     Start the Docker image up after build or pull is complete
-                    (default: ${CYAN}disabled or prompted${NC})
+${BGreen}-T/-t, --test${NC}     Start the Docker image up after build or pull is complete
+                  (default: ${CYAN}disabled or prompted${NC})
 
-  ${BGreen}-W/-w, --wipe${NC}     ${YELLOW}Hazardous:${NC} Delete all related Dockerfiles and Docker images
-                    (default: ${CYAN}always prompted${NC})
+${BGreen}-W/-w, --wipe${NC}     ${YELLOW}Hazardous:${NC} Delete all related Dockerfiles and Docker images
+                  (default: ${CYAN}always prompted${NC})
 
-  ${BGreen}-H/-h, --help${NC}     Show this help message
+${BGreen}-H/-h, --help${NC}     Show this help message
 
 ${BYellow}Description:${NC}
 
-  This script helps to easily build and test Rhino Linux Docker images.
+ This script helps to easily build and test Rhino Linux Docker images, or pull
+ them upstream. Designed to be adaptable with other Ubuntu-based Docker builds.
 
 ${BYellow}Examples:${NC}
 
-  ${BPurple}${0##*/} -f${NC}
+ ${BPurple}${0##*/} -f${NC}
 
-    Creates the file ${BGreen}Dockerfile-RhinoLinux-${dateiniso}${NC} for building the image
-    ${BGreen}rhino-linux/docker:${dateiniso}${NC}, with instructions on how to build and run it.
+  Creates the file ${BGreen}Dockerfile-RhinoLinux-${dateiniso}${NC} for building the image
+  ${BGreen}rhino-linux/docker:${dateiniso}${NC}, with instructions on how to build and run it.
 
-    ${BYellow}Note:${NC} if no options are passed, this is the default function, but users
-    will be asked if they would like to build and test the image.
-
-
-  ${BPurple}${0##*/} -b -t -c -v 2023.4 -a x86_64${NC}
-
-    Builds and starts ${BGreen}amd64/rhino-linux/docker:2023.4${NC} from scratch.
-
-    ${BYellow}Note:${NC} the version tag may not correlate with the actual Rhino Linux version.
-    This option is meant for easily publishing images for specific milestones.
+  ${BYellow}Note:${NC} if no options are passed, this is the default function, but users
+  will be asked if they would like to build and test the image.
 
 
-  ${BPurple}${0##*/} -p -t -v latest${NC}
+ ${BPurple}${0##*/} -b -t -c -v 2023.4 -a x86_64${NC}
 
-    Pulls and starts ${BGreen}ghcr.io/rhino-linux/docker:latest${NC}.
+  Builds and starts ${BGreen}amd64/rhino-linux/docker:2023.4${NC} from scratch.
+
+  ${BYellow}Note:${NC} the version tag may not correlate with the actual Rhino Linux version.
+  This option is meant for easily publishing images for specific milestones.
+
+
+ ${BPurple}${0##*/} -p -t -v latest${NC}
+
+  Pulls and starts ${BGreen}ghcr.io/rhino-linux/docker:latest${NC}.
 
 
 ${BPurple}${0##*/}${NC} ${BCyan}0.1.2${NC}
