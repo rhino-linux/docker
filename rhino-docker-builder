@@ -298,7 +298,7 @@ RUN ln -snf /usr/share/zoneinfo/\$TZ /etc/localtime && echo \$TZ > /etc/timezone
 ARG package="pacstall"
 
 RUN source /etc/os-release && \
-    sed -i "s/\$VERSION_CODENAME/.\/devel/g" /etc/apt/sources.list && \
+    sed -i "s/ \$VERSION_CODENAME/ .\/devel/g" /etc/apt/sources.list.d/ubuntu.sources && \
     if [[ \$(dpkg --print-architecture) == "amd64" ]]; then \
         dpkg --add-architecture i386; \
     fi && \
