@@ -288,6 +288,7 @@ fi
 
 function cat_built_dock {
   cat > ${built_dock} << EOF
+# syntax=docker/dockerfile:1-labs
 FROM ${base_darch}ubuntu:devel
 LABEL org.opencontainers.image.description "Contains Rhino Linux ${imgver}"
 
@@ -313,7 +314,7 @@ RUN sudo bash -c "\$(curl -fsSL https://pacstall.dev/q/install?dnt || wget -q ht
     rm -f /var/cache/apt/archives/*.deb /var/cache/apt/archives/partial/*.deb /var/cache/apt/*.bin
 RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 RUN chown -R rhino:rhino /var/log/pacstall && chown -R rhino:rhino /tmp/pacstall
-RUN runuser -l rhino -c 'HOME=/home/rhino SUDO_USER=rhino PACSTALL_DOWNLOADER=quiet-wget pacstall -PI nala-deb rhino-server-core'
+RUN --security=insecure runuser -l rhino -c 'HOME=/home/rhino SUDO_USER=rhino PACSTALL_DOWNLOADER=quiet-wget pacstall -PI nala-deb rhino-server-core'
 RUN echo "neofetch" >> /home/rhino/.bashrc
 # https://askubuntu.com/a/1026978
 RUN rm /etc/apt/apt.conf.d/docker-clean
@@ -342,7 +343,8 @@ if ((pull_upstream == 0)); then
 fi
 
 function build_image {
-  docker build -f ${built_dock} -t ${built_img} . ${no_cache} \
+  docker buildx create --use --name insecure-builder --buildkitd-flags '--allow-insecure-entitlement security.insecure' \
+    && docker buildx build -f ${built_dock} -t ${built_img} --allow security.insecure . ${no_cache} \
     && echo "${BYellow}Built image${NC} ${BPurple}${built_img}${BYellow}.${NC}"
 }
 
