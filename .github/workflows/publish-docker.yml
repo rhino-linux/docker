@@ -69,6 +69,7 @@ jobs:
         id: build
         uses: docker/build-push-action@v5
         with:
+          allow: security.insecure
           context: .
           file: ./${{ env.BUILT_DOCKFILE }}
           platforms: ${{ matrix.platform }}
