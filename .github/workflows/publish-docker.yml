@@ -24,7 +24,7 @@ jobs:
         include:
           - runner: ubuntu-latest
             platform: linux/amd64
-          - runner: buildjet-4vcpu-ubuntu-2404-arm
+          - runner: buildjet-4vcpu-ubuntu-2204-arm
             platform: linux/arm64
     permissions:
       contents: read
